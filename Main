@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLAYDREAM — A última forma</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+:root{--cream:#e9dfcc;--muted:#a69c8e;--red:#c66b60;--panel:rgba(22,22,24,.84);--line:rgba(233,223,204,.17)}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111214;color:var(--cream);font-family:Manrope,system-ui,sans-serif}button,input{font:inherit}button{cursor:pointer;color:inherit}#world{position:fixed;inset:0}canvas{display:block;width:100%;height:100%}.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 25%,rgba(0,0,0,.28) 75%,rgba(0,0,0,.78) 130%);z-index:1}.grain{position:fixed;inset:0;pointer-events:none;opacity:.07;z-index:2;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+.screen{position:fixed;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(90deg,rgba(9,10,12,.7),rgba(9,10,12,.2) 70%)}.hidden{display:none!important}.menu{width:min(1100px,100%);display:grid;grid-template-columns:1fr .83fr;gap:50px;align-items:center}.eyebrow,.mono{font-family:'DM Mono',monospace;letter-spacing:.16em;text-transform:uppercase;font-size:10px;color:#b2a28a}.eyebrow:before{content:"";display:inline-block;width:22px;height:1px;background:var(--red);vertical-align:middle;margin-right:10px}.logo{font-size:clamp(50px,8vw,104px);line-height:.87;letter-spacing:-.09em;font-weight:800;margin:18px 0 22px}.logo span{color:var(--red)}.subtitle{font-size:15px;line-height:1.8;color:#c1b7a8;max-width:410px}.menu-buttons{display:flex;flex-direction:column;gap:10px;margin-top:30px;max-width:330px}.btn{border:1px solid var(--line);background:rgba(255,255,255,.035);padding:14px 17px;text-align:left;display:flex;align-items:center;justify-content:space-between;transition:.2s;letter-spacing:.04em;font-size:12px}.btn:hover{background:rgba(255,255,255,.1);border-color:rgba(233,223,204,.45);transform:translateX(3px)}.btn.primary{background:var(--cream);color:#191819;border-color:var(--cream);font-weight:800}.btn.primary:hover{background:#fff4df}.arrow{font-size:17px}.horse-card{position:relative;min-height:430px;display:flex;align-items:center;justify-content:center}.horse-card:before{content:"";position:absolute;width:80%;aspect-ratio:1;border:1px solid rgba(226,207,172,.14);border-radius:50%;box-shadow:0 0 0 40px rgba(226,207,172,.025),0 0 0 100px rgba(226,207,172,.018)}.horse-label{position:absolute;bottom:10px;left:12%;right:4%;display:flex;justify-content:space-between;color:#8d8273;font:10px 'DM Mono',monospace;letter-spacing:.12em}.panel{width:min(550px,100%);background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(18px);padding:28px;box-shadow:0 30px 100px #0008}.panel h2{margin:10px 0 8px;font-size:29px;letter-spacing:-.05em}.panel p{color:#b7ad9e;font-size:13px;line-height:1.7}.setting{padding:15px 0;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:20px;font-size:13px}.setting small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.setting input[type=range]{width:140px;accent-color:var(--red)}.setting select{background:#242326;color:var(--cream);border:1px solid var(--line);padding:8px}.toggle{accent-color:var(--red);width:18px;height:18px}.panel-actions{display:flex;gap:10px;margin-top:22px}.panel-actions .btn{flex:1}.hud{position:fixed;z-index:4;inset:0;pointer-events:none;padding:24px;display:flex;flex-direction:column;justify-content:space-between}.hud-top{display:flex;justify-content:space-between;align-items:flex-start}.hud-block{background:rgba(10,10,12,.5);border:1px solid var(--line);padding:12px 15px;min-width:160px;backdrop-filter:blur(8px)}.hud-label{font:9px 'DM Mono',monospace;color:#a99d8c;letter-spacing:.15em}.hud-value{font-size:21px;font-weight:700;margin-top:4px}.meters{display:flex;gap:10px;margin-top:10px}.meter{width:115px}.meter-line{height:3px;background:#ffffff20;margin-top:7px}.meter-fill{height:100%;width:70%;background:#d8c6a5;transition:width .2s}.meter-fill.sanity{background:#b96d65}.hud-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:14px}.hint{max-width:400px;font-size:12px;color:#d2c6b5;line-height:1.7;text-shadow:0 2px 8px #000}.hud-controls{display:flex;gap:8px;pointer-events:auto}.mini-btn{border:1px solid var(--line);background:#111114c9;padding:10px 13px;font-size:10px;letter-spacing:.08em}.mini-btn:hover{background:#353036}.clay-panel{position:fixed;z-index:6;right:24px;top:50%;transform:translateY(-50%);width:260px;background:rgba(18,18,20,.92);border:1px solid var(--line);padding:18px;backdrop-filter:blur(15px)}.clay-panel h3{font-size:15px;margin:8px 0}.clay-panel p{font-size:11px;line-height:1.6;color:#a99f91}.clay-colors{display:flex;gap:8px;margin:15px 0}.clay-color{width:28px;height:28px;border-radius:50%;border:2px solid transparent;box-shadow:inset -4px -5px 6px #0004;cursor:pointer}.clay-color.active{outline:2px solid var(--cream);outline-offset:3px}.shape-target{border:1px solid var(--line);padding:12px;margin-top:14px;display:flex;justify-content:space-between;align-items:center}.shape-target strong{font-size:12px}.shape-target span{font:10px 'DM Mono',monospace;color:var(--red)}.progress{height:4px;background:#ffffff18;margin:14px 0 8px}.progress>div{height:100%;background:var(--red);width:0%;transition:width .25s}.wide{width:100%;text-align:center;justify-content:center;margin-top:10px}.toast{position:fixed;z-index:9;left:50%;top:18%;transform:translate(-50%,-10px);background:#171619eF;border:1px solid var(--line);padding:13px 20px;font-size:12px;opacity:0;transition:.3s;pointer-events:none;text-align:center;max-width:min(90vw,500px)}.toast.show{opacity:1;transform:translate(-50%,0)}.book-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}.creature{padding:12px;border:1px solid var(--line);background:#ffffff04;cursor:pointer}.creature:hover,.creature.active{border-color:#b76c62;background:#b76c6212}.creature b{display:block;font-size:12px}.creature small{display:block;color:var(--muted);font-size:10px;margin-top:5px}.book-desc{min-height:65px}.death-card{text-align:center;width:min(500px,100%)}.death-card h2{font-size:clamp(30px,6vw,54px)}.death-card .btn{justify-content:center}.footnote{font-size:10px;color:#756e65;margin-top:22px;letter-spacing:.08em}
+@media(max-width:700px){.menu{grid-template-columns:1fr;gap:0}.horse-card{position:absolute;right:-80px;top:5%;width:50%;min-height:260px;opacity:.45;pointer-events:none}.menu-copy{position:relative;z-index:2}.subtitle{max-width:330px}.logo{font-size:64px}.clay-panel{right:10px;top:auto;bottom:86px;transform:none;width:210px;padding:13px}.hud{padding:12px}.hud-block{min-width:130px;padding:9px}.hud-value{font-size:17px}.meter{width:90px}.hud-bottom{align-items:flex-end}.hint{max-width:52%;font-size:10px}.mini-btn{padding:9px}.panel{padding:20px}.horse-label{display:none}}
+#fade{position:fixed;inset:0;background:#000;z-index:3;pointer-events:none;display:none}.btn:disabled{opacity:.4;pointer-events:none}body.molding{cursor:grabbing}
+.up-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.up-card{display:flex;flex-direction:column;gap:4px;text-align:left;padding:11px;border:1px solid var(--line);background:rgba(255,255,255,.04)}.up-card:hover:not(:disabled){background:rgba(255,255,255,.12)}.up-card small{color:var(--muted);font-size:11px}.up-card em{font:normal 10px 'DM Mono',monospace;color:#b2a28a;letter-spacing:.1em}.up-card.picked{border-color:var(--red)}.up-card:disabled{opacity:.45}
+.death-card{max-height:92vh;overflow:auto}.up-card{padding:8px 10px}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    min-height: 100vh;
+}
+
+#app {
+    width: 100%;
+    min-height: 100vh;
+}
+</style>
+</head>
+<body>
+<div id="world"></div><div class="vignette"></div><div class="grain"></div><div id="fade"></div>
+<div id="mainMenu" class="screen">
+ <div class="menu">
+  <div class="menu-copy">
+   <div class="eyebrow">um pesadelo feito à mão</div>
+   <div class="logo">CLAY<span>DREAM</span></div>
+   <div class="subtitle">Você só queria dormir. Agora, cada minuto acordado parece uma eternidade — e alguma coisa está aprendendo a entrar no seu quarto.</div>
+   <div class="menu-buttons">
+    <button class="btn primary" id="playBtn">COMEÇAR A NOITE <span class="arrow">↗</span></button>
+    <button class="btn" id="continueBtn">CONTINUAR <span class="mono">NOITE 01</span></button>
+    <button class="btn" id="guideBtn">LIVRO DE CAMPO <span class="arrow">↗</span></button>
+    <button class="btn" id="settingsBtn">CONFIGURAÇÕES <span class="arrow">↗</span></button>
+   </div>
+   <div class="footnote">PROTÓTIPO 0.1 · UMA EXPERIÊNCIA DE TERROR EM MASSINHA</div>
+  </div>
+  <div class="horse-card"><div id="horseMount" style="width:100%;height:430px"></div><div class="horse-label"><span>FIGURA Nº 00 — CAVALO</span><span>MODELADO À MÃO</span></div></div>
+ </div>
+</div>
+<div id="settingsScreen" class="screen hidden"><div class="panel">
+ <div class="eyebrow">ajuste o seu pesadelo</div><h2>Configurações</h2><p>Deixe a experiência confortável para o seu computador e para você.</p>
+ <div class="setting"><div>Sensibilidade<small>Velocidade da câmera</small></div><input id="sensitivity" type="range" min="0.4" max="2" step=".1" value="1"></div>
+ <div class="setting"><div>Qualidade gráfica<small>Afeta sombras e detalhes</small></div><select id="quality"><option value="low">Leve</option><option value="medium" selected>Equilibrada</option><option value="high">Alta</option></select></div>
+ <div class="setting"><div>Jumpscares<small>Ative sustos repentinos</small></div><input class="toggle" id="jumpscares" type="checkbox"></div>
+ <div class="setting"><div>Movimento de câmera<small>Reduz balanço e oscilação</small></div><input class="toggle" id="cameraMotion" type="checkbox" checked></div>
+ <div class="setting"><div>Áudio do jogo<small>Ambiente e efeitos</small></div><input class="toggle" id="audioOn" type="checkbox" checked></div>
+ <div class="panel-actions"><button class="btn" id="settingsBack">VOLTAR</button><button class="btn primary" id="saveSettings">APLICAR</button></div>
+ </div></div>
+<div id="guideScreen" class="screen hidden"><div class="panel">
+ <div class="eyebrow">arquivo noturno · acesso permitido</div><h2>Livro de campo</h2><p>As páginas que você ainda não descobriu estão incompletas. Observe o quarto e aprenda os sinais.</p>
+ <div class="book-grid" id="creatureGrid"></div><div class="shape-target"><div><strong id="creatureName">O Vigia</strong><p class="book-desc" id="creatureDesc">Ele observa antes de se aproximar. Não ignore o silêncio repentino.</p></div><span id="creatureStatus">01 / 05</span></div>
+ <div class="panel-actions"><button class="btn" id="guideBack">VOLTAR</button><button class="btn primary" id="guideStart">VOLTAR AO JOGO</button></div>
+ </div></div>
+<div id="gameHud" class="hud hidden">
+ <div class="hud-top"><div class="hud-block"><div class="hud-label" id="nightLabel">NOITE 01 / 05</div><div class="hud-value" id="timeLabel">00:00</div><div class="meters"><div class="meter"><div class="hud-label">SONO</div><div class="meter-line"><div class="meter-fill" id="sleepFill"></div></div></div><div class="meter"><div class="hud-label">SANIDADE</div><div class="meter-line"><div class="meter-fill sanity" id="sanityFill"></div></div></div></div></div><div class="hud-block"><div class="hud-label">OBJETIVO</div><div class="hud-value" style="font-size:14px" id="objective">Modele a figura</div><div class="hud-label" style="margin-top:8px" id="threatLabel">O quarto está quieto.</div><div class="hud-label" id="invLabel" style="margin-top:6px"></div></div></div>
+ <div class="hud-bottom"><div class="hint" id="hintText">A noite começou. Use o mouse para olhar ao redor. Clique nas cores para trabalhar a massinha.</div><div class="hud-controls"><button class="mini-btn" id="actionBtn">INTERAGIR [E]</button><button class="mini-btn" id="openBook">LIVRO [G]</button><button class="mini-btn" id="pauseBtn">PAUSAR [ESC]</button></div></div>
+</div>
+<div id="clayPanel" class="clay-panel hidden"><div class="eyebrow">trabalho manual</div><h3 id="clayTitle">Cavalo de massinha</h3><p id="clayInstruction">Escolha uma cor e molde a figura antes que o sono desapareça.</p><div class="clay-colors" id="clayColors"></div><div class="progress"><div id="clayProgress"></div></div><div class="mono" id="clayProgressText">0% MODELADO</div><div class="mono" style="margin-top:10px;color:#e9dfcc">SEGURE O MOUSE PARA MODELAR</div></div>
+<div id="toast" class="toast"></div>
+<div id="pauseScreen" class="screen hidden"><div class="panel"><div class="eyebrow">o tempo não para</div><h2>Pausa</h2><p>Mesmo no silêncio, o quarto continua aqui.</p><div class="panel-actions"><button class="btn primary" id="resumeBtn">CONTINUAR</button><button class="btn" id="quitBtn">MENU PRINCIPAL</button></div></div></div>
+<div id="endScreen" class="screen hidden"><div class="panel death-card"><div class="eyebrow" id="endEyebrow">fim da noite</div><h2 id="endTitle">Você conseguiu.</h2><p id="endText">A primeira noite ficou para trás.</p><div id="upgradeArea" class="shape-target hidden"><div><strong>Intervalo seguro</strong><p>Escolha uma melhoria (placeholder para configurar depois).</p></div><span>+1</span></div><div class="panel-actions"><button class="btn" id="endMenu">MENU</button><button class="btn primary" id="endNext">PRÓXIMO</button></div></div></div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+<script type="module">
+import * as THREE from 'three';
+const $=id=>document.getElementById(id);
+const state={mode:'menu',night:1,sleep:60,sanity:100,progress:0,clayColor:0,paused:false,elapsed:0,lookX:0,lookY:0,mouseDown:false,threat:0,dead:false,quality:'medium',sensitivity:1,jumpscares:false,cameraMotion:true,audioOn:true,shapeDone:false,started:false,eCool:0,shield:0,up:{teddy:0,pillow:0,energy:0,flash:0,blanket:0,tea:0,amulet:0},bookFromGame:false,seen:new Set()};
+let hotspots=[],hovered=null,currentTarget="",threatDur=4,clayParts=[],clayBlob=null,hemi,spot;
+const sanMult=()=>1-.18*state.up.teddy,pillowMult=()=>1+.4*state.up.pillow,moldMult=()=>1+.45*state.up.energy;
+const SLEEP_START=60,SLEEP_GAIN_TOTAL=55;
+function nightLength(n){return 28+n*5}
+function sleepDrain(n){return SLEEP_START/(nightLength(n)*.75)}
+const creatures=[
+ {name:'O Vigia',short:'O observador',desc:'Ele fica parado no limite da luz. Quando o quarto fica silencioso demais, olhe para a porta e mantenha a calma.',avoid:'Observe a porta quando o som ambiente desaparecer.',shape:'Cavalo',need:5},
+ {name:'A Costureira',short:'A que rasteja',desc:'Você ouvirá um arranhar vindo debaixo da cama. Não se apresse: espere o som cessar antes de voltar a modelar.',avoid:'Pare de modelar quando ouvir arranhões sob a cama.',shape:'Gato',need:8},
+ {name:'O Borrão',short:'A coisa na parede',desc:'Sua silhueta aparece no canto do quarto e muda quando você não está olhando. Confira o canto esquerdo com frequência.',avoid:'Olhe para o canto esquerdo quando a sombra surgir.',shape:'Lua',need:11},
+ {name:'O Imitador',short:'A voz familiar',desc:'Ele repete pequenos sons do quarto. Quando ouvir três batidas, não mexa na massinha até a terceira terminar.',avoid:'Espere as três batidas acabarem.',shape:'Coelho',need:14},
+ {name:'A Última Forma',short:'O que aprende',desc:'Ele combina os sinais das noites anteriores. Alterne entre observar a porta, escutar e terminar a figura sem se distrair por muito tempo.',avoid:'Responda aos sinais e conclua a figura com cuidado.',shape:'Máscara',need:18}
+];
+let scene,camera,renderer,clock,bedGroup,clayGroup,monsterGroup,horseGroup,roomLights=[],objects=[],raycaster,mouse,ambient,mainLight,doorGroup,shadowMesh;
+let threats=[],nextThreatAt=8;const tmpV=new THREE.Vector3();
+const clayPalette=[0xc96d66,0x668b86,0xd3ad70,0x8178a5,0xe4d9c1,0x303035];
+const clayNames=['terracota','verde fosco','amarelo areia','lavanda','marfim','carvão'];
+function mat(color,roughness=.86,extra={}){return new THREE.MeshStandardMaterial({color,roughness,...extra})}
+function box(w,h,d,material,x,y,z,parent=scene){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);objects.push(m);return m}
+function sphere(r,material,x,y,z,parent=scene,scale=null){const m=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),material);m.position.set(x,y,z);if(scale)m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m}
+function cylinder(rt,rb,h,material,x,y,z,parent=scene){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,12),material);m.position.set(x,y,z);m.castShadow=true;parent.add(m);return m}
+function limb(a,b,r,material,parent){const d=new THREE.Vector3().subVectors(b,a),m=new THREE.Mesh(new THREE.CylinderGeometry(r*.8,r,d.length(),10),material);m.position.copy(a).add(b).multiplyScalar(.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());m.castShadow=true;parent.add(m);return m}
+function makeHorse(parent,scale=1){const g=new THREE.Group();parent.add(g);const clay=mat(0xc87c69),dark=mat(0x392c2c),eye=mat(0x171518),hoof=mat(0x40383a),mane=mat(0x55413c);
+sphere(.48,clay,0,.3,0,g,[1.35,.82,.78]);sphere(.29,clay,.37,.72,-.02,g,[.82,1.2,.8]);sphere(.22,clay,.48,1.03,.04,g,[.8,1,.78]);sphere(.17,clay,.58,.96,.16,g,[.8,.7,.65]);sphere(.11,dark,.54,1.13,.18,g,[.5,.6,.35]);sphere(.035,eye,.46,1.08,.23,g);sphere(.035,eye,.64,1.08,.23,g);sphere(.19,mane,.23,.96,-.02,g,[.55,1.4,.75]);for(let i=0;i<4;i++){let x=i%2?-.28:.28,z=i<2?-.23:.23;limb(new THREE.Vector3(x,.15,z),new THREE.Vector3(x-.04,-.34,z),.075,clay,g);box(.15,.09,.14,hoof,x-.04,-.37,z,g)}limb(new THREE.Vector3(-.4,.38,0),new THREE.Vector3(-.63,.05,0),.045,mane,g);sphere(.055,mane,-.63,.04,0,g);for(let i=0;i<2;i++){const ear=sphere(.07,clay,.31,1.23,i?-.12:.12,g,[.55,1.7,.6]);ear.rotation.z=-.25}g.scale.setScalar(scale);return g}
+function makeRoom(){scene=new THREE.Scene();scene.background=new THREE.Color(0x17181c);scene.fog=new THREE.Fog(0x17181c,8,23);camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,80);camera.position.set(0,2.8,8.4);camera.lookAt(0,1.6,0);renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.12;$('world').appendChild(renderer.domElement);clock=new THREE.Clock();raycaster=new THREE.Raycaster();mouse=new THREE.Vector2();
+hemi=new THREE.HemisphereLight(0xb4b6c9,0x29212a,1.7);scene.add(hemi);ambient=new THREE.AmbientLight(0x8d8a9b,.45);scene.add(ambient);mainLight=new THREE.PointLight(0xe8cda3,35,13,2);mainLight.position.set(-2,4,1);mainLight.castShadow=true;scene.add(mainLight);
+const floor=mat(0x3c3839),wall=mat(0x484044),trim=mat(0x29282e),wood=mat(0x4b3734),linen=mat(0x9a8d7d),blanket=mat(0x5b5b6d),metal=mat(0x5b5555),windowMat=new THREE.MeshStandardMaterial({color:0x526779,emissive:0x24374b,emissiveIntensity:.6,roughness:.4});
+box(12,.2,12,floor,0,-.1,0);box(12,5,.2,wall,0,2.4,-4.6);box(.2,5,12,wall,-6,2.4,1.3);box(.2,5,12,wall,6,2.4,1.3);box(12,.2,12,trim,0,4.9,1.3);
+for(let i=0;i<10;i++){box(.018,4.6,.02,mat(0x5a5051),-5.3+i*1.18,2.4,-4.48)}
+// window + curtains
+box(2.2,2.4,.1,trim,-3.7,3,-4.45);box(1.9,2.1,.08,windowMat,-3.7,3,-4.37);
+for(let i=0;i<4;i++){box(.24,2.55,.12,mat(i%2?0x55434c:0x493941),-4.72+i*.2,3,-4.25);box(.24,2.55,.12,mat(i%2?0x55434c:0x493941),-2.88+i*.2,3,-4.25)}
+// picture frames and art
+box(1.25,1.1,.12,trim,2.2,3.3,-4.42);box(1.08,.92,.04,mat(0x7e6b60),2.2,3.3,-4.33);sphere(.24,mat(0x30333c),2.2,3.3,-4.27);sphere(.12,mat(0xc7a17b),2.2,3.3,-4.22);
+box(.7,.85,.1,trim,4.3,3.4,-4.42);box(.55,.7,.03,mat(0x746c64),4.3,3.4,-4.35);box(.03,.6,.02,mat(0xb3a08c),4.3,3.4,-4.31);
+// door
+doorGroup=new THREE.Group();scene.add(doorGroup);box(1.25,2.7,.15,wood,4.7,1.35,-4.35,doorGroup);for(let i=0;i<3;i++)box(.92,.52,.04,mat(0x392c2b),4.7,2.15-i*.73,-4.25,doorGroup);sphere(.06,mat(0xb99a63),4.23,1.3,-4.2,doorGroup);
+// bed frame, mattress, pillow, blanket
+bedGroup=new THREE.Group();scene.add(bedGroup);box(3.3,.25,4.3,wood,0,.35,0,bedGroup);box(3.1,.42,4.05,mat(0xb4a89a),0,.62,0,bedGroup);box(3.15,.17,1.3,linen,0,.91,-1.25,bedGroup);box(3.13,.3,2.55,blanket,0,.82,.65,bedGroup);
+for(let x of [-1.45,1.45])for(let z of [-1.9,1.9])box(.15,.55,.15,wood,x,.05,z,bedGroup);
+box(3.35,.65,.2,wood,0,.65,-2.15,bedGroup);box(3.3,.12,.2,mat(0x30292a),0,.99,-2.15,bedGroup);
+// bedside table and lamp
+box(.95,.7,.8,wood,-2.5,.4,-.7);box(1.02,.08,.86,mat(0x6d5144),-2.5,.78,-.7);box(.04,.3,.04,metal,-2.5,.55,-1.03);cylinder(.28,.12,.28,mat(0xdec59c,0.5,{emissive:0x74532a,emissiveIntensity:.5}),-2.5,.95,-.7);const lamp=new THREE.PointLight(0xffc78b,18,6,2);lamp.position.set(-2.5,1.2,-.7);scene.add(lamp);roomLights.push(lamp);
+for(let i=0;i<3;i++){box(.4,.06,.6,mat(0x5b4a3f),-2.5,.12+i*.1,-.7)}
+// rug, scattered toys, shelf, books
+box(3.6,.04,2.2,mat(0x6d5552),0,.02,2.4);for(let i=0;i<8;i++)box(.018,.01,2.0,mat(0x9b7a70),-1.65+i*.47,.045,2.4);
+box(2.5,.15,.45,wood,3.9,2.1,-3.8);for(let i=0;i<6;i++){const book=box(.16,.48,.27,mat([0x74645c,0x6b6a76,0x9b7766][i%3]),3+i*.28,2.4,-3.8);book.rotation.z=(i%2?-.08:.08)}
+for(let i=0;i<4;i++){const star=sphere(.025,mat(0xdec99c,{emissive:0x8a704b,emissiveIntensity:.5}),-4.4+i*.45,3.7,-4.25);star.scale.set(1,1,0.2)}
+// bedside plush, tiny clay horse
+const plush=sphere(.25,mat(0x83766e),-2.4,.98,.3,scene,[1.1,.8,.8]);sphere(.08,mat(0x83766e),-2.57,1.17,.3);sphere(.08,mat(0x83766e),-2.25,1.17,.3);
+horseGroup=new THREE.Group();scene.add(horseGroup);const mini=makeHorse(horseGroup,.38);mini.position.set(2.3,1.08,.0);mini.rotation.y=-.4;
+// dust particles
+const dustGeo=new THREE.BufferGeometry(),dustN=120,dustPos=new Float32Array(dustN*3);for(let i=0;i<dustN;i++){dustPos[i*3]=(Math.random()-.5)*10;dustPos[i*3+1]=Math.random()*4;dustPos[i*3+2]=(Math.random()-.5)*8}dustGeo.setAttribute('position',new THREE.BufferAttribute(dustPos,3));const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({color:0xdac6a4,size:.025,transparent:true,opacity:.42}));scene.add(dust);
+// monster silhouettes
+monsterGroup=new THREE.Group();scene.add(monsterGroup);const shadowMat=new THREE.MeshStandardMaterial({color:0x0b0a0e,roughness:1});const body=sphere(.62,shadowMat,4.7,1.15,-3.55,monsterGroup,[.72,1.55,.55]);sphere(.32,shadowMat,4.7,2.15,-3.55,monsterGroup,[.8,1.1,.8]);for(let i=0;i<4;i++)limb(new THREE.Vector3(4.35+i*.22,1.4,-3.5),new THREE.Vector3(4.0+i*.4,.45,-3.35),.045,shadowMat,monsterGroup);for(let i=0;i<2;i++)sphere(.035,mat(0xc86e65,{emissive:0x8e2925,emissiveIntensity:1}),4.6+i*.2,2.18,-3.08,monsterGroup);monsterGroup.visible=false;
+clayGroup=new THREE.Group();scene.add(clayGroup);buildClay();
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,state.quality==='high'?2:1.25))});
+function makeHotspots(){
+ box(1.9,.07,1.5,mat(0x5a4636),0,1.0,1.2);box(1.0,3.2,2.0,mat(0x3f2f2c),5.4,1.6,-1.8);box(.04,3.0,.9,mat(0x241a19),4.88,1.6,-2.3);box(.04,3.0,.9,mat(0x241a19),4.88,1.6,-1.3);sphere(.04,mat(0xb99a63),4.86,1.6,-1.85);
+ [['door',1.5,2.8,.6,4.7,1.4,-4.1,'Porta'],['bed',3.5,.8,1.0,0,.4,2.5,'Sob a cama'],['corner',1.6,3.2,1.6,-5.2,1.6,-3.8,'Canto'],['window',2.3,2.5,.5,-3.7,3,-4.1,'Janela'],['closet',1.3,3.4,2.3,5.4,1.7,-1.8,'Armário'],['nightstand',1.1,1.4,1.0,-2.5,1.2,-.7,'Criado-mudo'],['ceiling',3.4,.9,3,0,4.35,-1.5,'Teto']].forEach(([k,w,h,d,x,y,z,label])=>{
+  const geo=new THREE.BoxGeometry(w,h,d),m=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({visible:false}));m.position.set(x,y,z);
+  const line=new THREE.LineSegments(new THREE.EdgesGeometry(geo),new THREE.LineBasicMaterial({transparent:true,depthTest:false})),fill=new THREE.Mesh(geo,new THREE.MeshBasicMaterial({transparent:true,depthTest:false,side:THREE.BackSide}));
+  line.renderOrder=fill.renderOrder=20;m.add(line,fill);m.userData={key:k,label,line,fill};m.visible=false;scene.add(m);hotspots.push(m)});
+ spot=new THREE.SpotLight(0xfff0cf,0,32,.42,.55,2);scene.add(spot,spot.target);
+ clayGroup.position.set(0,1.04,1.2);clayGroup.scale.setScalar(.85)}
+makeHotspots();
+animate()}
+function lump(g,a=.035){const p=g.attributes.position;for(let i=0;i<p.count;i++){const x=p.getX(i),y=p.getY(i),z=p.getZ(i),k=1+a*(Math.sin(x*9+y*5)+Math.sin(y*11+z*7)+Math.sin(z*8+x*6));p.setXYZ(i,x*k,y*k,z*k)}g.computeVertexNormals()}
+function buildClay(){clayGroup.clear();clayParts=[];const body=mat(clayPalette[state.clayColor],.78,{emissive:0x1c1514,emissiveIntensity:.6}),dk=mat(0x2b2526),iv=mat(0xe4d9c1,.8),V=(x,y,z)=>new THREE.Vector3(x,y,z),n=state.night;
+const add=(o,s=[1,1,1])=>{o.userData.s=s;o.castShadow=true;clayGroup.add(o);clayParts.push(o);return o};
+const B=(r,m,x,y,z,s)=>{const g=new THREE.SphereGeometry(r,28,20);lump(g);const o=new THREE.Mesh(g,m);o.position.set(x,y,z);return add(o,s)};
+const Lb=(a,b,r,m)=>{const o=limb(a,b,r,m,clayGroup);lump(o.geometry,.03);clayParts.pop();return add(o)};
+const bg=new THREE.SphereGeometry(.4,24,16);lump(bg);clayBlob=new THREE.Mesh(bg,body);clayBlob.position.set(0,.25,0);clayBlob.userData.s=[1.3,.65,1];clayGroup.add(clayBlob);
+if(n===1){B(.48,body,0,.72,0,[1.35,.82,.78]);B(.29,body,.37,1.14,-.02,[.82,1.2,.8]);B(.22,body,.48,1.45,.04,[.8,1,.78]);B(.17,body,.58,1.38,.04,[.8,.7,.65]);
+for(let i=0;i<4;i++){const x=i%2?-.28:.28,z=i<2?-.23:.23;Lb(V(x,.6,z),V(x-.04,.08,z),.08,body)}
+B(.19,dk,.23,1.38,-.02,[.55,1.4,.75]);Lb(V(-.4,.8,0),V(-.65,.3,0),.05,dk);for(let i=0;i<2;i++)B(.07,body,.31,1.66,i?-.1:.18,[.55,1.7,.6]);B(.035,dk,.52,1.5,.19);B(.035,dk,.52,1.5,-.11)}
+else if(n===2){B(.42,body,0,.6,0,[1.25,.95,.85]);B(.3,body,.55,.95,0,[1,.9,.95]);for(let i=0;i<4;i++){const x=i%2?-.3:.3,z=i<2?-.25:.25;Lb(V(x,.5,z),V(x,.08,z),.08,body)}
+Lb(V(-.5,.6,0),V(-.78,.9,0),.06,body);Lb(V(-.78,.9,0),V(-.66,1.25,0),.05,body);B(.09,body,.5,1.3,.14,[.7,1.5,.6]);B(.09,body,.5,1.3,-.14,[.7,1.5,.6]);B(.03,dk,.82,1.0,.1);B(.03,dk,.82,1.0,-.1);B(.035,iv,.85,.9,0)}
+else if(n===3){for(let i=0;i<3;i++){const g=new THREE.TorusGeometry(.6,.17,18,36,Math.PI*.64);lump(g);const o=new THREE.Mesh(g,body);o.position.set(0,1.05,0);o.rotation.z=.4+i*Math.PI*.62;add(o)}
+B(.09,iv,.45,1.75,.05);B(.07,iv,-.25,1.85,.05);B(.06,iv,.75,1.2,.05)}
+else if(n===4){B(.4,body,0,.55,0,[1.1,1,.95]);B(.28,body,.38,1.0,0,[1,.95,.9]);for(let i=0;i<2;i++)B(.13,body,.3,.1,i?-.2:.2,[1.6,.5,.8]);B(.15,iv,-.45,.55,0);
+for(let i=0;i<2;i++)B(.1,body,.32,1.55,i?-.1:.1,[.6,2.8,.5]);B(.03,dk,.62,1.05,.1);B(.03,dk,.62,1.05,-.1);B(.04,iv,.66,.95,0)}
+else{B(.55,body,0,1.0,0,[.85,1.15,.45]);for(let i=0;i<2;i++)B(.1,dk,i?-.2:.2,1.1,.2,[.8,1.2,.4]);B(.08,body,0,.95,.28,[.7,1.4,.8]);Lb(V(-.2,.7,.22),V(.2,.7,.22),.04,dk);for(let i=0;i<2;i++)B(.1,body,i?-.32:.32,.85,.15);Lb(V(-.3,1.5,0),V(-.5,1.9,0),.06,dk);Lb(V(.3,1.5,0),V(.5,1.9,0),.06,dk)}
+clayGroup.visible=state.mode==='game';updateClay()}
+function updateClay(){const c=clayParts.length,p=state.progress/100*c;clayParts.forEach((o,i)=>{const f=Math.max(0,Math.min(1,p-i)),e=f*f*(3-2*f);o.visible=f>0;o.scale.set(o.userData.s[0]*e,o.userData.s[1]*e,o.userData.s[2]*e)});if(clayBlob){const b=1-.7*Math.min(1,state.progress/60),s=clayBlob.userData.s;clayBlob.scale.set(s[0]*b,s[1]*b,s[2]*b)}}
+// monstros
+function buildMonster(n){const g=new THREE.Group();scene.add(g);const d=mat(0x120f14,1),pale=mat(0xcfc3b1,.9),eyeM=new THREE.MeshBasicMaterial({color:0xff5a4a}),V=(x,y,z)=>new THREE.Vector3(x,y,z),S=(r,m,x,y,z,sc)=>sphere(r,m,x,y,z,g,sc),E=(x,y,z,r=.07)=>sphere(r,eyeM,x,y,z,g);let lx=4,ly=2,lz=-3;
+if(n===0){S(.38,d,4,1.5,-3.5,[.6,2.2,.5]);S(.3,d,4,3.1,-3.5,[.8,1.2,.8]);limb(V(3.75,2.4,-3.5),V(3.4,.3,-3.1),.05,d,g);limb(V(4.25,2.4,-3.5),V(4.6,.3,-3.1),.05,d,g);E(3.9,3.15,-3.15);E(4.1,3.15,-3.15);ly=3}
+else if(n===1){lx=0;ly=.6;lz=3;S(.7,d,0,.3,2.9,[1.5,.5,.9]);for(let i=0;i<6;i++){const a=-1.2+i*.48;limb(V(Math.sin(a)*.5,.3,2.8),V(Math.sin(a)*1.9,.04,3.4+Math.cos(a)*.7),.04,pale,g);sphere(.07,pale,Math.sin(a)*1.9,.06,3.4+Math.cos(a)*.7,g)}E(-.25,.45,3.45,.06);E(.25,.45,3.45,.06)}
+else if(n===2){lx=-5;ly=1.5;lz=-3;for(let i=0;i<9;i++){const r=.4+.35*Math.abs(Math.sin(i*2.3));S(r,d,-5.3+Math.sin(i*1.7)*.5,.5+i*.35,-3.9+Math.cos(i*2.1)*.4)}for(let i=0;i<6;i++)E(-5.1+Math.sin(i*2.9)*.5,1+i*.4,-3.3,.06)}
+else if(n===3){S(.35,d,4,1.0,-3.4,[1,1.6,.7]);S(.36,pale,4,2.0,-3.4,[.95,1.05,.9]);E(3.88,2.1,-3.02,.06);E(4.12,2.1,-3.02,.06);const m=box(.5,.09,.05,d,4,1.85,-3.0,g);for(let i=0;i<5;i++)box(.05,.07,.04,pale,3.82+i*.09,1.86,-2.97,g);limb(V(3.7,1.6,-3.4),V(3.3,.5,-3.1),.05,d,g);limb(V(4.3,1.6,-3.4),V(4.7,.5,-3.1),.05,d,g);ly=2}
+else if(n===5){lx=4.8;ly=2.4;lz=-1.8;S(.5,d,5.0,2,-1.8,[.4,1.7,.9]);E(4.84,2.8,-2.1,.06);E(4.84,2.8,-1.5,.06);for(let i=0;i<3;i++){limb(V(4.9,2.3,-1.8+(i-1)*.3),V(4.0-i*.15,1.1-i*.2,-1.8+(i-1)*.7),.045,pale,g)}}
+else if(n===6){lx=-2.5;ly=1.4;lz=-.5;S(.2,d,-2.5,1.1,-.7,[.7,1.2,.5]);S(.22,pale,-2.5,1.45,-.7);E(-2.42,1.48,-.5,.04);E(-2.58,1.48,-.5,.04);limb(V(-2.65,1.15,-.7),V(-2.85,.95,-.5),.03,pale,g);limb(V(-2.35,1.15,-.7),V(-2.15,.95,-.5),.03,pale,g)}
+else if(n===7){lx=0;ly=4;lz=-1;S(.55,d,0,4.35,-1.5,[1.7,.45,1]);for(let i=0;i<8;i++){const a=i/8*6.28;limb(V(Math.sin(a)*.8,4.3,-1.5+Math.cos(a)*.5),V(Math.sin(a)*1.9,3.0+(i%2)*.5,-1.5+Math.cos(a)*1.1),.04,d,g)}E(-.2,4.1,-1.0,.06);E(.2,4.1,-1.0,.06)}
+else{lx=-3.7;ly=3;lz=-3;S(.95,pale,-3.7,3,-3.7,[.8,1.15,.4]);S(.18,d,-3.95,3.2,-3.33,[.8,1.4,.4]);S(.18,d,-3.45,3.2,-3.33,[.8,1.4,.4]);E(-3.95,3.2,-3.3,.05);E(-3.45,3.2,-3.3,.05);box(.5,.1,.05,d,-3.7,2.6,-3.3,g);for(let i=0;i<8;i++){const a=i/8*6.28;limb(V(-3.7+Math.cos(a)*.6,3+Math.sin(a)*.8,-3.7),V(-3.7+Math.cos(a)*2.4,Math.max(.1,3+Math.sin(a)*3),-3.3),.05,d,g)}}
+const L=new THREE.PointLight(0xff4a3a,6,9,2);L.position.set(lx,ly,lz);g.add(L);g.userData.anchor=new THREE.Vector3(lx,ly,lz);return g}
+function beginIntro(){state.started=false;const f=$('fade');f.style.display='block';f.getAnimations().forEach(a=>a.cancel());$('world').animate([{filter:'blur(10px)'},{filter:'blur(0px)'}],{duration:3800,easing:'ease-out'});
+const a=f.animate([{opacity:1},{opacity:1,offset:.12},{opacity:.1,offset:.3},{opacity:.95,offset:.45},{opacity:1,offset:.55},{opacity:0,offset:.85},{opacity:0}],{duration:3800,fill:'forwards'});
+a.onfinish=()=>{f.style.display='none';if(state.mode!=='game')return;state.started=true;$('gameHud').classList.remove('hidden');$('clayPanel').classList.remove('hidden');toast(state.night>=3?(state.night===3?'A luz acabou. Você achou uma lanterna: ela segue o mouse.':'Está ainda mais escuro.'):'Noite '+state.night+' — modele a figura e resista até o amanhecer.')}}
+function buildHorseMenu(){const s=new THREE.Scene();s.background=new THREE.Color(0x17181c);s.fog=new THREE.Fog(0x17181c,4,12);const c=new THREE.PerspectiveCamera(38,1,.1,30);c.position.set(2.4,2.4,5.5);c.lookAt(0,.8,0);const r=new THREE.WebGLRenderer({alpha:true,antialias:true});r.setPixelRatio(Math.min(devicePixelRatio,1.5));r.setSize($('horseMount').clientWidth,430);r.shadowMap.enabled=true;r.toneMapping=THREE.ACESFilmicToneMapping;$('horseMount').appendChild(r.domElement);s.add(new THREE.HemisphereLight(0xc4c5d6,0x30242b,2));const l=new THREE.DirectionalLight(0xffd5ae,3);l.position.set(-3,5,4);l.castShadow=true;s.add(l);const g=makeHorse(s,1.25);g.position.y=.25;const floor=new THREE.Mesh(new THREE.CircleGeometry(1.9,48),mat(0x29262b));floor.rotation.x=-Math.PI/2;floor.position.y=-.22;s.add(floor);const ring=new THREE.Mesh(new THREE.TorusGeometry(1.55,.012,8,80),mat(0x796857));ring.rotation.x=Math.PI/2;ring.position.y=-.2;s.add(ring);function loop(){if(!$('mainMenu').classList.contains('hidden')){g.rotation.y=Math.sin(performance.now()*.00045)*.24;r.render(s,c)}requestAnimationFrame(loop)}loop()}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>$('toast').classList.remove('show'),2800)}
+function showScreen(id){for(const el of ['mainMenu','settingsScreen','guideScreen','pauseScreen','endScreen'])$(el).classList.toggle('hidden',el!==id)}
+function startGame(n=1,reset=false){if(reset)state.up={teddy:0,pillow:0,energy:0,flash:0,blanket:0,tea:0,amulet:0};clearThreats();nextThreatAt=6+Math.random()*4;state.eCool=0;state.mouseDown=false;if(n>=3&&state.up.flash<1)state.up.flash=1;state.shield=state.up.amulet;updateInv();state.mode='game';state.night=n;state.sleep=SLEEP_START;state.sanity=100;state.progress=0;state.elapsed=0;state.threat=0;state.dead=false;state.shapeDone=false;state.paused=false;showScreen('');$('gameHud').classList.add('hidden');$('clayPanel').classList.add('hidden');beginIntro();$('clayTitle').textContent=creatures[n-1].shape+' de massinha';$('clayInstruction').textContent=`Segure o botão do mouse em qualquer lugar da tela para modelar.`;$('objective').textContent='Modele: '+creatures[n-1].shape;$('nightLabel').textContent=`NOITE 0${n} / 05`;$('hintText').textContent=(n===1?'Segure o mouse para modelar. Quando um monstro surgir, passe o mouse no contorno vermelho e aperte E.':'Segure o mouse para modelar. Fique atento ao quarto e verifique os contornos com E.');$('threatLabel').textContent='Você ouve o próprio coração.';monsterGroup.visible=false;state.progress=0;buildClay();makeColors();camera.position.set(0,2.8,8.4);state.lookX=0;state.lookY=0;document.exitPointerLock?.();toast('Noite '+n+' — você precisa terminar a figura e resistir até o amanhecer.')}
+function makeColors(){$('clayColors').innerHTML='';clayPalette.forEach((color,i)=>{const b=document.createElement('button');b.className='clay-color'+(i===state.clayColor?' active':'');b.style.background='#'+color.toString(16).padStart(6,'0');b.title=clayNames[i];b.onclick=()=>{state.clayColor=i;makeColors();buildClay();toast('Massinha: '+clayNames[i])};$('clayColors').appendChild(b)})}
+function makeGuide(){const grid=$('creatureGrid');grid.innerHTML='';MON.forEach((c,i)=>{const k=state.seen.has(i),d=document.createElement('div');d.className='creature'+(i===0?' active':'');d.innerHTML=`<b>${k?c.name:'???'}</b><small>${k?c.short:'Ainda não encontrado'}</small>`;d.onclick=()=>{grid.querySelectorAll('.creature').forEach(x=>x.classList.remove('active'));d.classList.add('active');$('creatureName').textContent=k?c.name:'Página bloqueada';$('creatureDesc').textContent=k?c.desc:'Encontre esta criatura para descobrir mais.';$('creatureStatus').textContent=`${i+1} / ${MON.length}`};grid.appendChild(d)})}
+function openGuide(){state.bookFromGame=state.mode==='game';makeGuide();$('gameHud').classList.add('hidden');$('clayPanel').classList.add('hidden');state.paused=true;showScreen('guideScreen')}
+function resumeGame(){showScreen('');if(state.mode==='game'){$('gameHud').classList.remove('hidden');if(!state.shapeDone)$('clayPanel').classList.remove('hidden');state.paused=false}}
+function die(reason,mon){if(state.dead)return;if(mon)state.seen.add(MON.indexOf(mon));state.dead=true;state.paused=true;document.exitPointerLock?.();$('gameHud').classList.add('hidden');$('clayPanel').classList.add('hidden');showScreen('endScreen');$('endEyebrow').textContent='registro de falha · noite '+String(state.night).padStart(2,'0');$('endTitle').textContent='Você não conseguiu dormir.';$('endText').textContent=reason+(mon?' Como evitar: '+mon.avoid:'')+' Você pode tentar a noite novamente com essa informação.';$('upgradeArea').classList.add('hidden');$('endNext').disabled=false;$('endNext').textContent='TENTAR NOVAMENTE';$('endNext').onclick=()=>startGame(state.night)}
+function winNight(){clearThreats();state.paused=true;document.exitPointerLock?.();$('gameHud').classList.add('hidden');$('clayPanel').classList.add('hidden');showScreen('endScreen');$('endEyebrow').textContent='amanhecer · noite '+String(state.night).padStart(2,'0');$('endTitle').textContent=state.night===5?'Você finalmente dormiu.':'A noite terminou.';$('endText').textContent=state.night===5?'Cinco formas. Cinco noites. O quarto finalmente ficou em silêncio.':'Você sobreviveu à noite '+state.night+'. Escolha uma melhoria provisória e prepare-se para a próxima figura.';if(state.night===5){$('upgradeArea').classList.add('hidden');$('endNext').disabled=false}else renderShop();$('endNext').textContent=state.night===5?'JOGAR NOVAMENTE':'PRÓXIMA NOITE';$('endNext').onclick=()=>state.night===5?startGame(1,true):startGame(state.night+1)}
+function setQuality(){state.quality=$('quality').value;renderer.shadowMap.enabled=state.quality!=='low';renderer.setPixelRatio(Math.min(devicePixelRatio,state.quality==='high'?1.8:state.quality==='medium'?1.25:1));renderer.setSize(innerWidth,innerHeight)}
+const MON=[
+{name:'O Vigia',short:'O observador',key:'door',dur:5,san:4,w:3,desc:'Fica parado perto da porta, no escuro, esperando você olhar para outro lado.',avoid:'Verifique a porta com frequência.'},
+{name:'A Costureira',short:'A que rasteja',key:'bed',dur:4.5,san:5,w:3,desc:'Rasteja para fora de baixo da cama. Seus dedos pálidos aparecem primeiro.',avoid:'Verifique o espaço sob a cama.'},
+{name:'O Borrão',short:'A coisa na parede',key:'corner',dur:4.5,san:6,w:3,desc:'Uma mancha viva no canto esquerdo do quarto que cresce quando ninguém olha.',avoid:'Verifique o canto esquerdo.'},
+{name:'O Imitador',short:'A voz familiar',key:'door',dur:4.5,san:6,w:2,desc:'Um sorriso largo na porta. Finge ser algo que você conhece.',avoid:'Verifique a porta, mesmo quando parecer seguro.'},
+{name:'A Última Forma',short:'O que aprende',key:'window',dur:4,san:8,w:2,desc:'Uma máscara enorme que surge na janela, com membros que se espalham pelo quarto.',avoid:'Verifique a janela.'},
+{name:'A Boca do Armário',short:'Mãos na fresta',key:'closet',dur:4.5,san:6,w:2,desc:'Algo se mexe na fresta do armário. Mãos pálidas procuram você.',avoid:'Verifique o armário.'},
+{name:'O Boneco',short:'O que senta e espera',key:'nightstand',dur:3.8,san:7,w:2,desc:'Aparece sentado no criado-mudo, ao lado do abajur. Rápido demais para quem se distrai.',avoid:'Verifique o criado-mudo.'},
+{name:'A Aranha do Teto',short:'A que cai',key:'ceiling',dur:4,san:7,w:1.5,desc:'Rasteja pelo teto, bem acima da cama, com oito pernas finas.',avoid:'Olhe para o teto de vez em quando.'}];
+function clearThreats(){threats.forEach(x=>scene.remove(x.g));threats=[]}
+function triggerThreat(){
+ if(state.paused||state.dead)return;
+ if(threats.length>=(state.night>=4?2:1))return;
+ const ids=MON.map((m,i)=>i).filter(i=>!threats.some(x=>x.key===MON[i].key||x.id===i));
+ let r=Math.random()*ids.reduce((a,i)=>a+MON[i].w,0),id=ids[0];for(const i of ids){r-=MON[i].w;if(r<=0){id=i;break}}
+ const m=MON[id],dur=Math.max(2.4,m.dur*(1-.06*(state.night-1)))*(1+.18*state.up.blanket);
+ threats.push({id,mon:m,key:m.key,g:buildMonster(id),dur,deadline:state.elapsed+dur});
+ if(state.night===1){$('threatLabel').textContent='PERIGO: '+m.name;$('hintText').textContent=m.name+' apareceu — mire no contorno vermelho e aperte E.'}
+}
+function resolveThreat(th){threats=threats.filter(x=>x!==th);scene.remove(th.g);state.seen.add(th.id);state.sanity=Math.max(0,state.sanity-th.mon.san*sanMult());state.sleep=Math.max(0,state.sleep-1.5);if(state.night===1){$('threatLabel').textContent='Você sobreviveu ao ataque.';$('hintText').textContent='Muito bem. Volte a modelar e continue atento.'}toast('Você reagiu a tempo. A criatura recuou.')}
+function interact(){
+ if(state.mode!=='game'||state.paused||state.dead||!state.started||state.eCool>state.elapsed)return;
+ if(!hovered){toast('Nada ao alcance.');return}
+ const th=threats.find(x=>x.key===hovered.userData.key);
+ if(th){resolveThreat(th);return}
+ if(state.night>=2){state.sanity=Math.max(0,state.sanity-3*sanMult());state.eCool=state.elapsed+.7}
+ toast(hovered.userData.label+': não havia nada ali.');
+}
+const UPS={teddy:{n:'Urso de pelúcia',max:4,d:'A sanidade cai mais devagar',i:'🧸'},pillow:{n:'Travesseiro',max:3,d:'Modelar rende mais sono',i:'🛏️'},energy:{n:'Energético',max:3,d:'Modela 45% mais rápido por nível',i:'⚡'},flash:{n:'Lanterna',max:3,d:'Mais alcance e brilho',i:'🔦'},blanket:{n:'Cobertor',max:3,d:'+18% de tempo para reagir',i:'🧣'},tea:{n:'Chá de camomila',max:3,d:'O sono cai mais devagar',i:'🍵'},amulet:{n:'Amuleto',max:2,d:'Anula 1 ataque por noite (por nível)',i:'🧿'}};
+function updateInv(){const ic={teddy:'🧸',pillow:'🛏️',energy:'⚡',flash:'🔦',blanket:'🧣',tea:'🍵',amulet:'🧿'};$('invLabel').textContent=Object.keys(ic).filter(k=>state.up[k]).map(k=>ic[k]+state.up[k]).join('  ')}
+function renderShop(){const a=$('upgradeArea');a.classList.remove('hidden');a.innerHTML='<div style="width:100%"><strong>Intervalo seguro</strong><p>Escolha 1 melhoria para a próxima noite.</p><div class="up-grid" id="upGrid"></div></div>';const grid=$('upGrid');
+Object.entries(UPS).forEach(([k,u])=>{if(k==='flash'&&state.up.flash<1)return;const lv=state.up[k],b=document.createElement('button');b.className='up-card';b.disabled=lv>=u.max;b.innerHTML=`<b>${u.i} ${u.n}</b><small>${u.d}</small><em>${lv>=u.max?'MÁXIMO':'NÍVEL '+lv+' → '+(lv+1)+' / '+u.max}</em>`;b.onclick=()=>{state.up[k]++;updateInv();grid.querySelectorAll('button').forEach(x=>x.disabled=true);b.classList.add('picked');$('endNext').disabled=false};grid.appendChild(b)});
+$('endNext').disabled=!!grid.querySelector('button:not(:disabled)')}
+function animate(){
+ requestAnimationFrame(animate);
+ const dt=Math.min(clock.getDelta(),.05),t=clock.elapsedTime;
+ if(state.mode==='game'&&!state.paused&&!state.dead&&state.started){
+  state.elapsed+=dt;
+  state.sleep=Math.max(0,state.sleep-dt*sleepDrain(state.night)*(1-.15*state.up.tea));
+  state.sanity=Math.max(0,state.sanity-dt*(.10+state.night*.025)*sanMult()-(state.night>=3?dt*.9*threats.length:0));
+  if(state.elapsed>=nextThreatAt){triggerThreat();nextThreatAt=state.elapsed+Math.max(3.4,10.5-state.night*1.5)+Math.random()*3.5}
+  for(const th of [...threats]){if(state.elapsed>=th.deadline){if(state.shield>0){state.shield--;threats=threats.filter(x=>x!==th);scene.remove(th.g);toast('O amuleto brilhou e te protegeu.')}else{die(th.mon.name+' alcançou você antes que reagisse.',th.mon);break}}}
+  if(state.sleep<=0)die('O cansaço venceu antes do amanhecer.');
+  if(state.sanity<=0)die('Sua sanidade se esgotou no escuro.');
+  if(state.elapsed>nightLength(state.night))winNight();
+  $('sleepFill').style.width=state.sleep+'%';
+  $('sanityFill').style.width=state.sanity+'%';
+  const sec=Math.floor(state.elapsed);
+  $('timeLabel').textContent=String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+  const lookTargetX=Math.sin(state.lookX)*4.5;
+  camera.position.x=lookTargetX*.42+(state.cameraMotion?Math.sin(t*.25)*.025:0);
+  camera.position.y=2.8+state.lookY+(state.cameraMotion?Math.sin(t*.6)*.018:0);
+  camera.position.z=8.4;
+  camera.lookAt(lookTargetX,1.55+state.lookY*.25,-1.1);
+  if(!state.shapeDone&&state.mouseDown){const need=creatures[state.night-1].need,dp=Math.min(100-state.progress,dt*100/(need*1.1+2)*moldMult());state.progress+=dp;state.sleep=Math.min(100,state.sleep+SLEEP_GAIN_TOTAL*dp/100*pillowMult());state.sanity=Math.max(0,state.sanity-dp*.04*sanMult());$('clayProgress').style.width=state.progress+'%';$('clayProgressText').textContent=Math.floor(state.progress)+'% MODELADO';updateClay();
+   if(state.progress>=100){state.shapeDone=true;$('objective').textContent='Figura concluída';toast('A forma está pronta. Agora aguente até o amanhecer.');$('clayInstruction').textContent='A figura está pronta. Observe os sinais e sobreviva.'}}
+  threats.forEach(th=>{th.g.position.z=Math.min(1,1-(th.deadline-state.elapsed)/th.dur)*1.3;let vis=true;if(state.night>=3){if(state.up.flash>0){const a=th.g.userData.anchor;tmpV.set(a.x,a.y,a.z+th.g.position.z).sub(camera.position);vis=tmpV.angleTo(raycaster.ray.direction)<.26+.07*state.up.flash}else vis=false}th.g.visible=vis});
+  const molding=!state.shapeDone&&state.mouseDown;document.body.classList.toggle('molding',molding);clayGroup.rotation.y=Math.sin(t*.5)*.04+(molding?Math.sin(t*14)*.05:0);
+ }
+ {const dark=state.mode==='game'&&state.night>=3,DK=[0,0,1,.55,.3][state.night-1]||1,play=state.mode==='game'&&state.started;
+ state.lookX+=(mouse.x*1.05*state.sensitivity-state.lookX)*Math.min(1,dt*3);state.lookY+=(Math.max(-.45,Math.min(.45,mouse.y*.35*state.sensitivity))-state.lookY)*Math.min(1,dt*3);
+ hemi.intensity=dark?.22*DK:1.7;ambient.intensity=dark?.1*DK:(state.sanity<30?.22:.45);mainLight.intensity=dark?0:(state.mode==='game'&&state.sanity<40?32+Math.sin(t*14)*8:35);roomLights[0].intensity=dark?0:18;
+ scene.background.setHex(dark?0x050507:0x17181c);scene.fog.color.copy(scene.background);
+ raycaster.setFromCamera(mouse,camera);hovered=play&&!state.paused?(raycaster.intersectObjects(hotspots,false)[0]||{}).object||null:null;
+ spot.intensity=state.up.flash&&state.mode==='game'?150+70*state.up.flash:0;spot.angle=.3+.07*state.up.flash;spot.position.copy(camera.position);spot.target.position.copy(camera.position).addScaledVector(raycaster.ray.direction,14);
+ hotspots.forEach(h=>{h.visible=play&&!state.paused;const thr=state.night===1&&threats.some(x=>x.key===h.userData.key);let c=0xe9dfcc,o=.18;if(thr){c=0xff5a4a;o=.55+.45*Math.pow(Math.sin(t*8),2)}else if(h===hovered)o=.9;const u=h.userData;u.line.material.color.setHex(c);u.line.material.opacity=o;u.fill.material.color.setHex(c);u.fill.material.opacity=o*.16})}
+ if(state.mode==='menu')horseGroup.rotation.y=Math.sin(t*.3)*.08;
+ renderer.render(scene,camera);
+}
+makeRoom();buildHorseMenu();
+$('playBtn').onclick=()=>startGame(1,true);$('continueBtn').onclick=()=>startGame(state.night);$('settingsBtn').onclick=()=>showScreen('settingsScreen');$('settingsBack').onclick=()=>showScreen('mainMenu');$('saveSettings').onclick=()=>{state.sensitivity=Number($('sensitivity').value);state.jumpscares=$('jumpscares').checked;state.cameraMotion=$('cameraMotion').checked;state.audioOn=$('audioOn').checked;setQuality();showScreen('mainMenu');toast('Configurações aplicadas.')};$('guideBtn').onclick=()=>{state.mode='menu';makeGuide();showScreen('guideScreen')};$('guideBack').onclick=()=>state.bookFromGame?resumeGame():showScreen('mainMenu');$('guideStart').onclick=()=>state.bookFromGame?resumeGame():startGame(state.night);$('actionBtn').onclick=interact;$('pauseBtn').onclick=()=>{if(state.mode==='game'){state.paused=true;document.exitPointerLock?.();showScreen('pauseScreen')}};$('resumeBtn').onclick=resumeGame;$('quitBtn').onclick=()=>{clearThreats();state.mode='menu';state.paused=false;$('gameHud').classList.add('hidden');$('clayPanel').classList.add('hidden');document.exitPointerLock?.();showScreen('mainMenu')};$('openBook').onclick=openGuide;$('endMenu').onclick=()=>{clearThreats();state.mode='menu';$('gameHud').classList.add('hidden');$('clayPanel').classList.add('hidden');showScreen('mainMenu')};
+window.addEventListener('pointermove',e=>mouse.set(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1));
+window.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('button,input,select'))return;if(state.mode==='game'&&!state.paused&&state.started)state.mouseDown=true});
+['pointerup','pointercancel','blur'].forEach(ev=>window.addEventListener(ev,()=>{state.mouseDown=false}));
+window.addEventListener('keydown',e=>{
+ if(e.code==='Escape'&&state.mode==='game'&&!state.paused){state.paused=true;document.exitPointerLock?.();showScreen('pauseScreen')}
+ else if(e.key.toLowerCase()==='g'&&state.mode==='game'&&!state.paused)openGuide();
+ else if(e.key.toLowerCase()==='e'&&state.mode==='game'&&!state.paused)interact();
+ else if(e.code==='Space'&&state.mode==='game'&&!state.paused){e.preventDefault();interact()}
+});
+</script>
+</body>
+</html>
